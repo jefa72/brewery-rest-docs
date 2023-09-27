@@ -62,6 +62,8 @@ public class BeerControllerTest {
     public void getBeer() throws Exception {
         given(beerService.getBeerById(any(UUID.class))).willReturn(validBeer);
 
+        ConstrainedFields fields = new ConstrainedFields(BeerDto.class);
+
         mockMvc.perform(get("/api/v1/beer/{beerId}", validBeer.getId().toString()).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
@@ -72,12 +74,12 @@ public class BeerControllerTest {
                                 parameterWithName("beerId").description("UUID of desired beer to get.")
                         ),
                         responseFields(
-                                fieldWithPath("id").description("Id of Beer").type(UUID.class),
-                                fieldWithPath("createdDate").description("Date Created").type(OffsetDateTime.class),
-                                fieldWithPath("lastUpdatedDate").description("Date Updated").type(OffsetDateTime.class),
-                                fieldWithPath("beerName").description("Beer Name"),
-                                fieldWithPath("beerStyle").description("Beer Style"),
-                                fieldWithPath("upc").description("UPC of Beer")
+                                fields.withPath("id").description("Id of Beer").type(UUID.class),
+                                fields.withPath("createdDate").description("Date Created").type(OffsetDateTime.class),
+                                fields.withPath("lastUpdatedDate").description("Date Updated").type(OffsetDateTime.class),
+                                fields.withPath("beerName").description("Beer Name"),
+                                fields.withPath("beerStyle").description("Beer Style"),
+                                fields.withPath("upc").description("UPC of Beer")
                         )));
     }
 
@@ -99,9 +101,9 @@ public class BeerControllerTest {
                 .andExpect(status().isCreated())
                 .andDo(document("v1/beer-new",
                         requestFields(
-                                fields.withPath("id").ignored(),
-                                fields.withPath("createdDate").ignored(),
-                                fields.withPath("lastUpdatedDate").ignored(),
+                                fields.withPath("id").description("Id of Beer").ignored(),
+                                fields.withPath("createdDate").description("Date Created").ignored(),
+                                fields.withPath("lastUpdatedDate").description("Date Updated").ignored(),
                                 fields.withPath("beerName").description("Name of the beer"),
                                 fields.withPath("beerStyle").description("Style of Beer"),
                                 fields.withPath("upc").description("Beer UPC")
